@@ -191,7 +191,10 @@ body{
 
 @media(max-width: 480px){
     .modal{
-        margin: 50px 0vh 0px;
+        background-color: rebeccapurple;
+        margin: 0px 0vh 0px;
+        position: absolute;
+        top: 170px;
         width: 54vh;
         height: 65vh;  
     }
@@ -207,16 +210,25 @@ body{
         font-size: 14px;      
     }
     #writting{
-
+        background-color: rgba(255, 0, 0, 0.23);
         width: 225px;
-        margin: 10vh 8.5vh 0px;
+        position: absolute;
+        top: 69px;
+        right: 80px;
+        margin: 0px 0px 0px;
     }
     #sender{
-        margin: 6vh 8vh 0px;
+        position: absolute;
+        top: 48px;
+        left: 53px;
+        margin: 0px 0px 0px;
     }
     #page_number{
-        width: 80px;
-        margin: 6vh 30vh 0vh;
+        position: absolute;
+        top: 48px;
+        right: 80px;
+        width: 50px;
+        margin: 0px 0px 0px;
     }
     
     .letter_contents_btn{
@@ -225,20 +237,21 @@ body{
     }
     
     #btn_next{
+        position: absolute;
         left: 230px;
-        bottom: 240px;
+        bottom: 180px;
     }
     
     #btn_before{
-        position: fixed;
+        position: absolute;
         left: 60px;
-        bottom: 240px;
+        bottom: 180px;
     }
     
     #btn_finish{
-        position: fixed;
+        position: absolute;
         left: 145px;
-        bottom:240px;
+        bottom:180px;
     
     }   
 }
