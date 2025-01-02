@@ -191,7 +191,7 @@ body{
 
 @media(max-width: 480px){
     .modal{
-        background-color: rebeccapurple;
+        background-color: rgb(51, 153, 112);
         margin: 0px 0vh 0px;
         position: absolute;
         top: 170px;
