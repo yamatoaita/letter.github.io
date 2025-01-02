@@ -77,12 +77,12 @@ class SiteSystem{
 
                 if (snapshot.exists()) {//パスワードが登録されていた場合
                     this.letters = snapshot.val();//データを格納
-                    try{
-                        this.show_letters();//保存されている手紙データを表示
-                    }catch(error){
-                        this.letters = [];
-                    }
-
+                    this.letters = JSON.parse(this.letters);
+                    this.letters = this.letters[0][1];//なぜか[0][0]番目にはlettersが入っている。
+                    console.table(this.letters);
+                    console.log("=============================================")
+                    this.show_letters();//保存されている手紙データを表示
+                    //this.letters = []
 
                     {//手紙編集ボタンの設定
                         this.btn_before.addEventListener("click",()=>{
@@ -295,9 +295,11 @@ class SiteSystem{
             //手紙に関するデータを送信
         });
         //===============================================================================================
-        //===============================================================================================
-        
+        //===============================================================================================        
+
         this.letters.push(lists);//手紙データを保存
+        this.pages = []; 
+
         this.id += 1;
         this.save_data();//データを保存
     }
@@ -402,7 +404,8 @@ class SiteSystem{
     }
     
     show_letters(){//Page2-手順➂ 保存されている手紙を表示する
-
+        console.table(this.letters);
+        console.log(this.letters[0]);
         for(let item of this.letters){//item[0]:差出人名, item[1]:手紙の配列=[page1,page2,・・・, pageN], pageN=ページの内容；文字列データ
             
             //========【HTMLウェジットを製作】================================================================
@@ -511,10 +514,11 @@ class SiteSystem{
         
         const user_data_pack = {};
         user_data_pack.letters = this.letters;
+        const JSON_datapack =  JSON.stringify(Object.entries(user_data_pack))
 
         //const newPostRef = push(this.dbRef);//ユニークキーを生成する場合
         const dbRef =  ref(this.db, `data/${this.passward}`);
-        set(dbRef,user_data_pack);//Google Firebaseにデータを保存（key, data）
+        set(dbRef,JSON_datapack);//Google Firebaseにデータを保存（key, data）
         
         
     }
