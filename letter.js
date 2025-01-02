@@ -45,7 +45,7 @@ class SiteSystem{
                 this.page_index = 0;
                 this.pages = [];   
                 this.passward_dbRef =  ref(this.db, `data/${this.passward}`);
-     
+                this.text_changed_flg = false;
             }
 
             {//HTMLウェジットの取得
@@ -65,6 +65,7 @@ class SiteSystem{
 
             {//ボタンイベントの設定
                 this.div_writting.addEventListener("input",()=>{
+                    this.text_changed_flg = true;
                     this.trim();//手紙表示において、最大文字数の調節
                 });
                 this.btn.addEventListener("click",()=>{
@@ -310,13 +311,36 @@ class SiteSystem{
             "ひややっこ"
         ]
 
-        var obj = {
-            letters : ["名無し",[[]]]
-        }
+           
+        var contents = [
+
+        "2025年、あけましておめでとうございます。この度は、年賀状をご覧になっていただきありがとうございます。<div>この年賀状は大学で集まった5人で制作しました。こちらの手紙は年賀</div>",
+        "状の制作秘話を混じえて、各コーナーの解説をします。<div><br></div><div>⑴年賀状 トップページ</div><div>デザイン:すとう はるか&nbsp;</div><div>プログラミング: ひらつか れん&nbsp;</div>",
+        "【はるさんから 何かコメント】<div>【れんさんから 何か一言】<br>⑵占いの館&nbsp;</div><div>デザイン: すとう はるか</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; あいた やまと</div><div>プログラミング: あいた やまと</div>",
+        "やまとの思い入れがある作品です。年賀状ではありますが、一年中楽しむことができます。 「仕事」「人間関係」の占いはもうお済みですか？こちらは私自身の為に作ったものでもあります。私の愛読書 『貞観",
+        "政要』を原典として、来年度、社会人になる上で 為になる古語を揃えております。 2000年前もの、不易の教えです。また、「うさちゃん」2035年(兎年)の今日占いもオススメです。ぜひ、お楽しみください。", 
+        "⑶ヘビクイズ<div>問題制作: あおの ゆうと</div><div>デザイン:すとう はるか</div><div>プログラミング: あいた やまと</div><div><br></div><div>面白いクイズ作りに定評のある</div>",
+        "あおのの制作したクイズです。問題文に合わせて、すとうが可愛い絵を描きました。ぜひ、満点を目指してみてください。",
+        "⑷おみくじデザイン:すとうはるか<div>プログラミング:あいたやまと</div><div><br></div><div>2025年の運勢はどうでしょうか？ぜひすとうの可愛いイラストも合わせてご覧下さい。</div>",
+        "⑸図書館コーナー<div>デザイン : みつづか まゆ</div><div>プログラミング:ひらつか れん</div><div>資料・文章: みつづか まゆ</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; あおの ゆうと</div><div><br></div>",
+        "様々なヘビにまつわるお話、情報を集めました。みつづかの作ったイラストも合わせてご覧下さい。(画像はフリー素材です)。<div>ひらつかの書いた小説もぜひお読みください</div>",
+        "⑹手紙コーナー<div>デザイン:あいた やまと</div><div>プログラミング:あいた やまと</div><div><br></div><div>日頃、伝えられない感謝の言葉があります。このような交流の場があ</div>",
+        "れば、嬉しいなと思い制作しました。 こちら、書き込みも可能です。 交流の場として活用ください。",
+        "終わりに<div>12月〜1月にかけて、5人の力を合わせ完成しました。<div>新年、この年賀状が皆様の笑顔・喜びに繋がれば幸いです。<div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 　　　制作チーム一同</div></div></div>"
+
+        ]
+        var letter = [["年賀状制作チーム",contents]]
+ 
         
+        var obj = {
+            letters : letter
+        }
+
+        var JSON_datapack =  JSON.stringify(Object.entries(obj))
+
         for(let item of register_passwards){
             const dbRef =  ref(this.db, `data/${item}`);
-            set(dbRef,obj);//Google Firebaseにデータを保存（key, data）
+            set(dbRef,JSON_datapack);//Google Firebaseにデータを保存（key, data）
         }
         //const newPostRef = push(this.dbRef);//ユニークキーを生成する場合
 
@@ -481,23 +505,27 @@ class SiteSystem{
     close(current_id){//【➡check_letter】手紙確認・編集画面を閉じる
         this.modal.style.display = "none";
 
-        var rawtexts  = this.div_sender.textContent;//差出人を取得
-        var replaced = rawtexts.replaceAll("より","");//より　を消去
+        if(this.text_changed_flg == true){
+            var rawtexts  = this.div_sender.textContent;//差出人を取得
+            var replaced = rawtexts.replaceAll("より","");//より　を消去
+            
         
-       
-        this.letters[current_id][0] =replaced ;//元の手紙データ　差出人データを上書き
+            this.letters[current_id][0] =replaced ;//元の手紙データ　差出人データを上書き
 
-       
-        //===================================================================================================================
-        var saved_currrent_page = this.pages[this.page_index];//現在のページにある　元データを取得
-        if(saved_currrent_page){//何か元々データがある時
-            this.pages[this.page_index] = this.div_writting.innerHTML;//現在のページデータをthis.pagesに上書き
-        }else{//そのページ番号にデータが存在しなかった場合；そのページが存在しなかった場合
-            this.pages.push(this.div_writting.innerHTML);//新たにページデータを追加
-            this.div_writting.innerHTML = "";
+        
+            //===================================================================================================================
+            var saved_currrent_page = this.pages[this.page_index];//現在のページにある　元データを取得
+            if(saved_currrent_page){//何か元々データがある時
+                this.pages[this.page_index] = this.div_writting.innerHTML;//現在のページデータをthis.pagesに上書き
+            }else{//そのページ番号にデータが存在しなかった場合；そのページが存在しなかった場合
+                this.pages.push(this.div_writting.innerHTML);//新たにページデータを追加
+                this.div_writting.innerHTML = "";
+            }
+            this.letters[current_id][1] = this.pages;//元の手紙データに　ページ内容を上書き
+            //===================================================================================================================
+
+            this.save_data();//データを保存
         }
-        this.letters[current_id][1] = this.pages;//元の手紙データに　ページ内容を上書き
-        //===================================================================================================================
 
         {//各種初期化
             this.div_writting.innerHTML = "　　　ここに内容を入力";//modalの現在表示されている内容を初期化
@@ -506,8 +534,6 @@ class SiteSystem{
             this.page_index = 0;
             this.div_page_number.textContent = `${this.page_index+1}枚目`    
         }
-        
-        this.save_data();//データを保存
     }
 
     save_data(){
