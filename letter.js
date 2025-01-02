@@ -1,11 +1,20 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getDatabase, ref, push,  get, set, onChildAdded, remove, onChildRemoved } 
+from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+
+
+
 class SiteSystem{
     constructor(){
+
+
 
 
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i); // キーを取得
             const value = localStorage.getItem(key); // 値を取得
-            console.log(`Key: ${key}, Value: ${value}`);
+            //console.log(`Key: ${key}, Value: ${value}`);
         }
 
 
@@ -13,6 +22,20 @@ class SiteSystem{
         {//common
             this.are_there_data();
             this.explain = document.getElementById("explain");
+            // Firebase configuration
+            const firebaseConfig = {
+                apiKey: "AIzaSyB9CgQmYZocsxz_VDw_cfpH_emghLeG20A",
+                authDomain: "letter-7441d.firebaseapp.com",
+                projectId: "letter-7441d",
+                storageBucket: "letter-7441d.firebasestorage.app",
+                messagingSenderId: "1003417528239",
+                appId: "1:1003417528239:web:ab688f429eec24407d715a",
+                databaseURL: "https://letter-7441d-default-rtdb.firebaseio.com/" 
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            this.db = getDatabase(app);
         }
 
 
@@ -20,7 +43,9 @@ class SiteSystem{
             {//変数の宣言
                 this.id = 0;
                 this.page_index = 0;
-                this.pages = [];    
+                this.pages = [];   
+                this.passward_dbRef =  ref(this.db, `data/${this.passward}`);
+     
             }
 
             {//HTMLウェジットの取得
@@ -48,18 +73,34 @@ class SiteSystem{
 
             }
             
-            this.get_userdata(2);//page2, letter.indexの時のデータ取り出し
-            this.show_letters();//保存されている手紙データを表示
+            get(this.passward_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
 
-            {//手紙編集ボタンの設定
-                this.btn_before.addEventListener("click",()=>{
-                    this.before_page();//前のページに戻すボタンを設定
-                });
-        
-                this.btn_next.addEventListener("click", ()=>{
-                    this.next_page();//次のページに移動・または作成するボタンを設定
-                });
-            }
+                if (snapshot.exists()) {//パスワードが登録されていた場合
+                    this.letters = snapshot.val();//データを格納
+                    try{
+                        this.show_letters();//保存されている手紙データを表示
+                    }catch(error){
+                        this.letters = [];
+                    }
+
+
+                    {//手紙編集ボタンの設定
+                        this.btn_before.addEventListener("click",()=>{
+                            this.before_page();//前のページに戻すボタンを設定
+                        });
+                
+                        this.btn_next.addEventListener("click", ()=>{
+                            this.next_page();//次のページに移動・または作成するボタンを設定
+                        });
+                    }
+
+
+                } else {//パスワードが存在しなかった場合
+                    console.log("error: non available passward, in get_userdata");
+                }
+            });
+            
+
             
 
         }else{//page1
@@ -114,7 +155,7 @@ class SiteSystem{
         if(width>=480){
             var max_size = 300;
         }else{
-            console.log(this.div_writting.clientHeight);
+            
             var max_size = 130;
         }
         var exit_cnt = 0;
@@ -262,22 +303,23 @@ class SiteSystem{
     }
 
     register(){//【➡constracter】
-
-        var register_data = [
+        var register_passwards = [
             "ところてん",
             "ひややっこ"
         ]
-        var user_data_pack = new Map();
-        for(let item of register_data){
-            user_data_pack.set(item,[]);
+
+        var obj = {
+            letters : ["名無し",[[]]]
         }
+        
+        for(let item of register_passwards){
+            const dbRef =  ref(this.db, `data/${item}`);
+            set(dbRef,obj);//Google Firebaseにデータを保存（key, data）
+        }
+        //const newPostRef = push(this.dbRef);//ユニークキーを生成する場合
 
-        var packed_object_map = JSON.stringify(Array.from(user_data_pack.entries()));
-        //localStorageでは生のobject mapを保存できません。
-        //そのため、JSON形式に変換して保存します。
 
-        window.localStorage.letter_data = packed_object_map;
-        //データをストレージに保存
+
 
 
     }
@@ -333,32 +375,30 @@ class SiteSystem{
     }
 
     check_passward(){//【➡constracter】手順　Page1-➁
-        this.get_userdata(1);
-        var user_input = this.entry.value;
-        
-        if(this.site_data.get(user_input)){//データが取り出せているのか試す。
-            //パスワードでデータが取得できた場合
-            this.link();
-        }else{
-            //データが取得できなかった場合
-            this.explain.textContent = "パスワードが違います。もう一度入力してください"
-        }
 
+        var user_input = this.entry.value;
+        const dbRef =  ref(this.db, `data/${user_input}`);
+
+        get(dbRef).then((snapshot) => {
+            if (snapshot.exists()) {//パスワードが登録されていた場合
+                this.link(); 
+            } else {//パスワードが存在しなかった場合
+                this.explain.textContent = "パスワードが違います。もう一度入力してください"
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
-    get_userdata(page){//手順 Page1-➂, Page2-➁
-        if(page==1){//index.htmlの場合
-            var raw_data  = window.localStorage.getItem("letter_data"); // キーに対応する値を取得   
-            this.site_data = new Map(JSON.parse(raw_data));//JSON加工を解凍して  
-
-        }else if(page==2){//letter.htmlの場合
-            var raw_data  = window.localStorage.getItem("letter_data"); // キーに対応する値を取得   
-            raw_data = new Map(JSON.parse(raw_data));//JSON加工を解凍して  
-            this.letters = raw_data.get(this.passward);//パスワードに一致するデータを取り出す.
-            //取り出したデータは手紙配列のみ。なので直接this.letterに格納
-        }          
-       
-   
+    get_userdata(){//モデル関数　読み込みはしない。
+        get(this.passward_dbRef).then((snapshot) => {
+            if (snapshot.exists()) {//パスワードが登録されていた場合
+                    this.letters = snapshot.val();//データを格納
+            
+            } else {//パスワードが存在しなかった場合
+                console.log("error: non available passward, in get_userdata");
+            }
+        });
     }
     
     show_letters(){//Page2-手順➂ 保存されている手紙を表示する
@@ -441,7 +481,7 @@ class SiteSystem{
         var rawtexts  = this.div_sender.textContent;//差出人を取得
         var replaced = rawtexts.replaceAll("より","");//より　を消去
         
-        console.log(typeof this.letters[current_id][0]);
+       
         this.letters[current_id][0] =replaced ;//元の手紙データ　差出人データを上書き
 
        
@@ -469,23 +509,14 @@ class SiteSystem{
 
     save_data(){
         
-        //保存するdictionaryの作成・取得
-        if(window.localStorage.letter_data == ""){
-            var user_data_pack = new Map();
-        }else{
-            var raw_data = window.localStorage.getItem("letter_data");
-            var user_data_pack = new Map(JSON.parse(raw_data));
-            //二回目以降は、localstorageにあるdictionaryにデータを追加していきます。
-            //じゃないと、毎回dictionaryごと上書きしてしまうため。
-            //複数人のデータが保存されません。
-        }
+        const user_data_pack = {};
+        user_data_pack.letters = this.letters;
 
-        user_data_pack.set(this.passward,this.letters);
-        var packed_object_map = JSON.stringify(Array.from(user_data_pack.entries()));
-        //localStorageでは生のobject mapを保存できません。
-        //そのため、JSON形式に変換して保存します。
-        window.localStorage.letter_data = packed_object_map;
-        //データをストレージに保存
+        //const newPostRef = push(this.dbRef);//ユニークキーを生成する場合
+        const dbRef =  ref(this.db, `data/${this.passward}`);
+        set(dbRef,user_data_pack);//Google Firebaseにデータを保存（key, data）
+        
+        
     }
 
     //=============================================================================================================
