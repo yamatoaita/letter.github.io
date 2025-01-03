@@ -20,7 +20,6 @@ class SiteSystem{
 
 
         {//common
-            this.are_there_data();
             this.explain = document.getElementById("explain");
             // Firebase configuration
             const firebaseConfig = {
@@ -36,48 +35,78 @@ class SiteSystem{
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             this.db = getDatabase(app);
+            this.cookie_dbRef =  ref(this.db, `data/cookie`);
+
         }
-
-
-        if(this.passward){//page2
-            {//変数の宣言
-                alert("in page 2");
-                this.id = 0;
-                this.page_index = 0;
-                this.pages = [];   
-                this.passward_dbRef =  ref(this.db, `data/${this.passward}`);
-                this.text_changed_flg = false;
-            }
-
-            {//HTMLウェジットの取得
-                this.btn_before = document.getElementById("btn_before");
-                this.btn_finish = document.getElementById("btn_finish");
-                this.btn_next = document.getElementById("btn_next");
-                this.modal = document.getElementById("modal");
-                this.div_writting = document.getElementById("writting");
-                
+       
         
-                this.div_sender = document.getElementById("sender");
-                this.div_page_number = document.getElementById("page_number");
-                this.btn = document.getElementById("showbtn");
-    
-                
-            }
+        get(this.cookie_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
+           
+            if (snapshot.exists()) {//パスワードが登録されていた場合
+                this.passward = snapshot.val();//データを格納[DATE,"passward"]
+                this.passward = JSON.parse(this.passward);
 
-            {//ボタンイベントの設定
-                this.div_writting.addEventListener("input",()=>{
-                    this.text_changed_flg = true;
-                    this.trim();//手紙表示において、最大文字数の調節
-                });
-                this.btn.addEventListener("click",()=>{
-                    this.show();//手紙編集・確認画面の表示
-                });
+                let cookie_date = new Date(this.passward[0]); // cookie_dateを格納
+                let current_date = new Date(); // 現在の時刻を取得
 
-            }
+                // cookie_dateから現在時刻までの経過時間をミリ秒で取得
+                let elapsed_time = current_date - cookie_date; 
+                console.log(`elapsed time is ${elapsed_time}. current date[${current_date}]- cookie_date[${cookie_date}]`);
+                // 3秒（3000ミリ秒）経過したか判定
+                if (elapsed_time >= 3000) {
+                    this.passward = "Nothing";
+                    console.log("over 3 sec")
+                } else {
+                    this.passward = this.passward[1];
+                    console.log(`get passward ${this.passward}`)
+                }
+
             
-            try{
-                get(this.passward_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
+            } else {//パスワードが存在しなかった場合
+                this.passward = "Nothing";
+                console.log("error: non available passward, in get_userdata");
+            }
 
+
+            if(this.passward != "Nothing"){//page2
+
+                {//変数の宣言
+                    this.id = 0;
+                    this.page_index = 0;
+                    this.pages = [];   
+                    this.passward_dbRef =  ref(this.db, `data/${this.passward}`);
+                    this.text_changed_flg = false;
+                    
+                }
+    
+                {//HTMLウェジットの取得
+                    this.btn_before = document.getElementById("btn_before");
+                    this.btn_finish = document.getElementById("btn_finish");
+                    this.btn_next = document.getElementById("btn_next");
+                    this.modal = document.getElementById("modal");
+                    this.div_writting = document.getElementById("writting");
+                    
+            
+                    this.div_sender = document.getElementById("sender");
+                    this.div_page_number = document.getElementById("page_number");
+                    this.btn = document.getElementById("showbtn");
+        
+                    
+                }
+    
+                {//ボタンイベントの設定
+                    this.div_writting.addEventListener("input",()=>{
+                        this.text_changed_flg = true;
+                        this.trim();//手紙表示において、最大文字数の調節
+                    });
+                    this.btn.addEventListener("click",()=>{
+                        this.show();//手紙編集・確認画面の表示
+                    });
+    
+                }
+                
+                get(this.passward_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
+    
                     if (snapshot.exists()) {//パスワードが登録されていた場合
                         this.letters = snapshot.val();//データを格納
                         this.letters = JSON.parse(this.letters);
@@ -86,7 +115,7 @@ class SiteSystem{
                         console.log("=============================================")
                         this.show_letters();//保存されている手紙データを表示
                         //this.letters = []
-
+    
                         {//手紙編集ボタンの設定
                             this.btn_before.addEventListener("click",()=>{
                                 this.before_page();//前のページに戻すボタンを設定
@@ -96,43 +125,46 @@ class SiteSystem{
                                 this.next_page();//次のページに移動・または作成するボタンを設定
                             });
                         }
-
-
+    
+    
                     } else {//パスワードが存在しなかった場合
                         console.log("error: non available passward, in get_userdata");
                     }
                 });
-            }catch(error){
-                alert(`Error: ${error.message}`);
-            }
+                
+    
+                
+    
+            }else{//page1
 
-            
-
-        }else{//page1
-            try{
-
-                {//HTMLウェジットの取得
-                    this.entry = document.getElementById("entry");
-                    this.entrybtn = document.getElementById("entrybtn");
-                    this.registerbtn = document.getElementById("registerbtn");
+                try{
+    
+                    {//HTMLウェジットの取得
+                        this.entry = document.getElementById("entry");
+                        this.entrybtn = document.getElementById("entrybtn");
+                        this.registerbtn = document.getElementById("registerbtn");
+                    }
+                    
+                    {//ボタンイベントの設定
+                        this.entrybtn.addEventListener("click",()=>{
+                            this.check_passward();
+                        });
+                        this.registerbtn.addEventListener("click",()=>{
+                            this.register();
+                        });
+                    }
+                    
+                }catch(error){
+                    window.location.href = "index.html";
+                    //もしページがletter.htmlの時、エラーがでます。
+                    //パスワードが無く、ページがletter.htmlならindex.htmlに遷移させます。
                 }
                 
-                {//ボタンイベントの設定
-                    this.entrybtn.addEventListener("click",()=>{
-                        this.check_passward();
-                    });
-                    this.registerbtn.addEventListener("click",()=>{
-                        this.register();
-                    });
-                }
-                
-            }catch(error){
-                window.location.href = "index.html";
-                //もしページがletter.htmlの時、エラーがでます。
-                //パスワードが無く、ページがletter.htmlならindex.htmlに遷移させます。
-            }
-            
-        }    
+            } 
+        });
+       
+
+           
 
 
         {/*使う変数一覧
@@ -393,19 +425,10 @@ class SiteSystem{
 
 //================================================================================================================================================================
 
-    are_there_data(){//手順➀パスワードが遷移前のページindex.htmlで入力されていたか判断。
-        var value = `; ${document.cookie}`;//cookieを取り出し
-        var parts = value.split(`; passward=`);//passwardという名前に紐づく文字列データを取得
-        try{
-            this.passward = parts.pop().split(";").shift();//文字列データからpasswardを抽出
-        }catch(error){
-            this.passward = "Nothing";//たぶんいらない
-        }
-
-    }
+    
 
     check_passward(){//【➡constracter】手順　Page1-➁
-
+        
         var user_input = this.entry.value;
         const dbRef =  ref(this.db, `data/${user_input}`);
 
@@ -480,7 +503,11 @@ class SiteSystem{
 
         const expires = new Date();
         expires.setTime(expires.getTime() + 2000);//2000
-        document.cookie = `passward = ${user_data};path=/; expires=${expires.toUTCString()}`;
+        /*document.cookie = `passward = ${user_data};path=/; expires=${expires.toUTCString()}`;*/
+
+        var cookie_list = [expires,user_data];
+        cookie_list = JSON.stringify(cookie_list);
+        set(this.cookie_dbRef,cookie_list);
 
         window.location.href = "letter.html";
     }
