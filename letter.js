@@ -41,6 +41,7 @@ class SiteSystem{
 
         if(this.passward){//page2
             {//変数の宣言
+                alert("in page 2");
                 this.id = 0;
                 this.page_index = 0;
                 this.pages = [];   
