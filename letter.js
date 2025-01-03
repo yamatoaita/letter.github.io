@@ -74,33 +74,36 @@ class SiteSystem{
 
             }
             
-            get(this.passward_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
+            try{
+                get(this.passward_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
 
-                if (snapshot.exists()) {//パスワードが登録されていた場合
-                    this.letters = snapshot.val();//データを格納
-                    this.letters = JSON.parse(this.letters);
-                    this.letters = this.letters[0][1];//なぜか[0][0]番目にはlettersが入っている。
-                    console.table(this.letters);
-                    console.log("=============================================")
-                    this.show_letters();//保存されている手紙データを表示
-                    //this.letters = []
+                    if (snapshot.exists()) {//パスワードが登録されていた場合
+                        this.letters = snapshot.val();//データを格納
+                        this.letters = JSON.parse(this.letters);
+                        this.letters = this.letters[0][1];//なぜか[0][0]番目にはlettersが入っている。
+                        console.table(this.letters);
+                        console.log("=============================================")
+                        this.show_letters();//保存されている手紙データを表示
+                        //this.letters = []
 
-                    {//手紙編集ボタンの設定
-                        this.btn_before.addEventListener("click",()=>{
-                            this.before_page();//前のページに戻すボタンを設定
-                        });
-                
-                        this.btn_next.addEventListener("click", ()=>{
-                            this.next_page();//次のページに移動・または作成するボタンを設定
-                        });
+                        {//手紙編集ボタンの設定
+                            this.btn_before.addEventListener("click",()=>{
+                                this.before_page();//前のページに戻すボタンを設定
+                            });
+                    
+                            this.btn_next.addEventListener("click", ()=>{
+                                this.next_page();//次のページに移動・または作成するボタンを設定
+                            });
+                        }
+
+
+                    } else {//パスワードが存在しなかった場合
+                        console.log("error: non available passward, in get_userdata");
                     }
-
-
-                } else {//パスワードが存在しなかった場合
-                    console.log("error: non available passward, in get_userdata");
-                }
-            });
-            
+                });
+            }catch(error){
+                alert(`Error: ${error.message}`);
+            }
 
             
 
