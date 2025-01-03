@@ -191,7 +191,7 @@ body{
 
 @media(max-width: 480px){
     .modal{
-        background-color: rgb(138, 153, 51);
+
         margin: 0px 0vh 0px;
         position: absolute;
         top: 170px;
@@ -210,7 +210,7 @@ body{
         font-size: 14px;      
     }
     #writting{
-        background-color: rgba(255, 0, 0, 0.23);
+
         width: 225px;
         position: absolute;
         top: 69px;
