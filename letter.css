@@ -190,6 +190,10 @@ body{
 
 }
 
+.registerbtn{
+    display: none;
+}
+
 @media(max-width: 480px){
     .modal{
 
