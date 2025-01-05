@@ -272,6 +272,9 @@ class SiteSystem{
             range.collapse(false); // 範囲を末尾に移動
             selection.removeAllRanges(); // 既存の選択範囲をクリア
             selection.addRange(range); // 新しい範囲を追加
+
+            console.log(this.div_writting.innerHTML);
+
         }
 
         
@@ -542,6 +545,11 @@ class SiteSystem{
 
         const sender = item[0] + "より";//差出人の取得
         this.div_sender.innerHTML = sender;//そして、画面に表示
+        if(item[0]=="年賀状制作チーム"){
+            this.div_writting.contentEditable = "false";
+        }else{
+            this.div_writting.contentEditable = "true";
+        }
 
         this.pages= item[1];//ページ内容の取得　リスト型
         this.div_writting.innerHTML = this.pages[this.page_index];//１ページ目を表示
@@ -588,6 +596,7 @@ class SiteSystem{
             this.page_index = 0;
             this.div_page_number.textContent = `${this.page_index+1}枚目`    
         }
+        console.log(this.letters)
     }
 
     save_data(){
