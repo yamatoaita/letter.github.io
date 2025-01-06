@@ -616,5 +616,20 @@ class SiteSystem{
 
 }
 
-
+class SendEmail{
+    constructor(){
+        Email.send({
+            Host : "smtp.mailendo.com",
+            Username : "yamatoaita@gmail.com",
+            Password : "A7251AD9DFC9016C72377173ED0F03320342",
+            To : 'yamatoaita@gmail.com',
+            From : "yamatoaita@gmail.com",
+            Subject : "This is the subject",
+            Body : "And this is the body"
+        }).then(
+          message => alert(message)
+        );
+    }
+}
+var mail = new SendEmail();
 var system =  new SiteSystem();
