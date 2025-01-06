@@ -615,21 +615,29 @@ class SiteSystem{
     //=============================================================================================================
 
 }
+// EmailJSの初期化
+emailjs.init("CgOVjpyefCauhyHU4"); 
+class SendEmail {
+    constructor() {
+        
+        this.sendEmail();
+    }
 
-class SendEmail{
-    constructor(){
-        Email.send({
-            Host : "smtp.mailendo.com",
-            Username : "yamatoaita@gmail.com",
-            Password : "A7251AD9DFC9016C72377173ED0F03320342",
-            To : 'yamatoaita@gmail.com',
-            From : "yamatoaita@gmail.com",
-            Subject : "This is the subject",
-            Body : "And this is the body"
-        }).then(
-          message => alert(message)
-        );
+    sendEmail() {
+        // 定型文
+        const messageContent = "てすとだお"; 
+
+        // メール送信
+        emailjs.send("service_mpnsn85", "template_1qhbbli", {
+            message: "てすとだお",  // 送信する内容
+            to_email: "yamatoaita@gmail.com"  // 送信先（自分のメールアドレス）
+        }).then(function(response) {
+            console.log("Message sent successfully: " + response.status);
+        }, function(error) {
+            console.log("Message failed: " + error);
+        });
     }
 }
+
 var mail = new SendEmail();
 var system =  new SiteSystem();
