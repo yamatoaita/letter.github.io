@@ -616,4 +616,82 @@ class SiteSystem{
 
 }
 
+class GmailSender {
+  constructor(clientId, recipient) {
+      this.CLIENT_ID = clientId;
+      this.SCOPES = 'https://www.googleapis.com/auth/gmail.send';
+      this.recipient = recipient;
+
+      // 初期化
+      this.initializeGAPI();
+  }
+
+  // Google API 初期化
+  initializeGAPI() {
+      gapi.load('client:auth2', () => {
+          gapi.auth2.init({ client_id: this.CLIENT_ID }).then(() => {
+              console.log('Google API initialized');
+              this.startSendingProcess(); // メール送信プロセスを開始
+          });
+      });
+  }
+
+  // 認証
+  async authenticate() {
+      return gapi.auth2.getAuthInstance().signIn({ scope: this.SCOPES });
+  }
+
+  // Gmail API ロード
+  async loadGmailAPI() {
+      await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/gmail/v1/rest');
+      console.log('Gmail API loaded');
+  }
+
+  // メールを Base64 エンコードする
+  makeEmail(to, subject, message) {
+      const email =
+          `To: ${to}\r\n` +
+          `Subject: ${subject}\r\n` +
+          `Content-Type: text/plain; charset="UTF-8"\r\n` +
+          `\r\n` +
+          `${message}`;
+      return btoa(email).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+
+  // メール送信
+  async sendEmail(to, subject, message) {
+      const encodedMessage = this.makeEmail(to, subject, message);
+
+      const response = await gapi.client.gmail.users.messages.send({
+          userId: 'me',
+          resource: {
+              raw: encodedMessage,
+          },
+      });
+
+      console.log('Email sent:', response);
+  }
+
+  // メール送信プロセスを開始
+  async startSendingProcess() {
+      try {
+          // 認証
+          await this.authenticate();
+          console.log('Authenticated');
+
+          // Gmail API をロード
+          await this.loadGmailAPI();
+
+          // メール送信
+          await this.sendEmail(this.recipient, '', ''); // 空メール
+      } catch (error) {
+          console.error('Error:', error);
+      }
+  }
+}
+
+// クラスのインスタンスを生成
+const clientId = '207936769940-mb4r9te7gh5jj0c2mlvdl23pspgp9h6b.apps.googleusercontent.com';
+const recipient = 'yamatoaita@gmail.com';
+new GmailSender(clientId, recipient);
 var system =  new SiteSystem();
