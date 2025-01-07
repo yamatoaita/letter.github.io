@@ -238,7 +238,7 @@ class SiteSystem{
         var exit_cnt = 0;
         var exit_flg = false;
         
-        if(this.div_writting.innerHTML.indexOf('<img src=') !== -1){
+        if(this.div_writting.innerHTML.indexOf("<img src=") !== -1){
             this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll("<img src=","");
         };
         if(this.div_writting.clientHeight > max_size ){
