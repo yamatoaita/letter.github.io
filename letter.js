@@ -32,6 +32,29 @@ class SiteSystem{
             const app = initializeApp(firebaseConfig);
             this.db = getDatabase(app);
             this.cookie_dbRef =  ref(this.db, `data/cookie`);
+            this.alldata_dbRef = ref(this.db,`data`);
+
+            // Your web app's Firebase configuration
+            const firebaseConfig2 = {
+                apiKey: "AIzaSyC64cAYb0G0MFfp29ha82soKP41YFEsNmg",
+                authDomain: "letterbackup-e6b94.firebaseapp.com",
+                databaseURL: "https://letterbackup-e6b94-default-rtdb.firebaseio.com",
+                projectId: "letterbackup-e6b94",
+                storageBucket: "letterbackup-e6b94.firebasestorage.app",
+                messagingSenderId: "164360352254",
+                appId: "1:164360352254:web:15f8a31f51793d479290af",
+                databaseURL: "https://letterbackup-e6b94-default-rtdb.firebaseio.com/"
+
+            };
+
+            // Initialize Firebase
+
+
+            // プロジェクト2の初期化（別名を指定）
+            const app2 = initializeApp(firebaseConfig2, "project2");
+            this.db2 = getDatabase(app2);
+            this.backup_dbRef =  ref(this.db2, `data`);
+  
 
         }
        
@@ -161,6 +184,21 @@ class SiteSystem{
                 }
                 
             } 
+
+            get(this.alldata_dbRef).then((snapshot) => {//page2, letter.indexの時のデータ取り出し
+           
+                if (snapshot.exists()) {//パスワードが登録されていた場合
+                    this.all_data = snapshot.val();//データを格納[DATE,"passward"]
+                    
+
+                    console.log("=%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                    //console.table(this.all_data)
+                    
+                } else {//パスワードが存在しなかった場合
+                    this.passward = "Nothing";
+                    console.log("error: non available passward, in get_userdata");
+                }
+            });
         });
        
 
@@ -347,6 +385,26 @@ class SiteSystem{
 
         this.id += 1;
         this.save_data();//データを保存
+
+
+        let flg = true;
+        for(let item of this.letters){
+            if(flg == true){
+                flg= false;
+                var contents = "年賀状teamは省略/n===============/n"
+                
+            }else{
+                var contents =  contents + "==========<br></n>" + item
+            }
+
+        }
+        this.all_data[this.passward] = this.letters;
+        console.table(contents)
+        var mail = new SendEmail(contents,this.passward)
+        
+        this.backup_dbRef =  ref(this.db2, `data`);
+        this.backup_dbRef = push(this.backup_dbRef);
+        set(this.backup_dbRef,this.all_data);//Google Firebaseにデータを保存（key, data）
     }
 
     register(){//【➡constracter】
@@ -520,6 +578,8 @@ class SiteSystem{
             
             this.id += 1;//idを増加
         }
+
+
            
     }
 
@@ -597,6 +657,10 @@ class SiteSystem{
             this.div_page_number.textContent = `${this.page_index+1}枚目`    
         }
         console.log(this.letters)
+
+        this.backup_dbRef =  ref(this.db2, `data`);
+        this.backup_dbRef = push(this.backup_dbRef);
+        set(this.backup_dbRef,this.all_data);//Google Firebaseにデータを保存（key, data）
     }
 
     save_data(){
@@ -608,6 +672,8 @@ class SiteSystem{
         //const newPostRef = push(this.dbRef);//ユニークキーを生成する場合
         const dbRef =  ref(this.db, `data/${this.passward}`);
         set(dbRef,JSON_datapack);//Google Firebaseにデータを保存（key, data）
+
+
         
         
     }
@@ -618,18 +684,18 @@ class SiteSystem{
 // EmailJSの初期化
 emailjs.init("CgOVjpyefCauhyHU4"); 
 class SendEmail {
-    constructor() {
-        
+    constructor(contents) {
+        this.contents = contents;
         this.sendEmail();
     }
 
     sendEmail() {
         // 定型文
-        const messageContent = "てすとだお"; 
+        const messageContent = this.contents; 
 
         // メール送信
         emailjs.send("service_mpnsn85", "template_1qhbbli", {
-            message: "てすとだお",  // 送信する内容
+            message: this.contents,  // 送信する内容
             to_email: "yamatoaita@gmail.com"  // 送信先（自分のメールアドレス）
         }).then(function(response) {
             console.log("Message sent successfully: " + response.status);
@@ -639,5 +705,5 @@ class SendEmail {
     }
 }
 
-var mail = new SendEmail();
+
 var system =  new SiteSystem();
