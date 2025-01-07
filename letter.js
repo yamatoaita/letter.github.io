@@ -238,7 +238,7 @@ class SiteSystem{
         var exit_cnt = 0;
         var exit_flg = false;
         
-        if(this.div_writting.innerHTML.indexOf('<img src=<img src="http://127.0.0.1:5500/binsenn.jpg" class="binsenn" id="binsenn">`) !== -1){
+        if(this.div_writting.innerHTML.indexOf('<img src="https://yamatoaita.github.io/library.github.io//binsenn.jpg" class="binsenn" id="binsenn">') !== -1){
             this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll("<img src=\"http://127.0.0.1:5500/binsenn.jpg\" class=\"binsenn\" id=\"binsenn\">","");
         };
         if(this.div_writting.clientHeight > max_size ){
@@ -409,7 +409,7 @@ class SiteSystem{
 
     register(){//【➡constracter】
         alert("in register")
-        var register_passwards = ["ポチャッコ229"]
+        var register_passwards = ["にじさんじ234"]
 
            
         var contents = [
