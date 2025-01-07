@@ -238,8 +238,8 @@ class SiteSystem{
         var exit_cnt = 0;
         var exit_flg = false;
         
-        if(this.div_writting.innerHTML.indexOf('<img src="http://127.0.0.1:5500/binsenn.jpg"') !== -1){
-            this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll("<img src=\"http://127.0.0.1:5500/binsenn.jpg\" class=\"binsenn\" id=\"binsenn\">","");
+        if(this.div_writting.innerHTML.indexOf('<img src=') !== -1){
+            this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll("<img src=","");
         };
         if(this.div_writting.clientHeight > max_size ){
             
