@@ -238,8 +238,8 @@ class SiteSystem{
         var exit_cnt = 0;
         var exit_flg = false;
         
-        if(this.div_writting.innerHTML.indexOf(`<img src="https://yamatoaita.github.io/letter.github.io/binsenn.jpg" class="binsenn" id="binsenn">`) !== -1){
-            this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll(`<img src="https://yamatoaita.github.io/letter.github.io/binsenn.jpg" class="binsenn" id="binsenn">`,"");
+        if(this.div_writting.innerHTML.indexOf("<img src=") !== -1){
+            this.div_writting.innerHTML = this.div_writting.innerHTML.replaceAll("<img src=","");
         };
         if(this.div_writting.clientHeight > max_size ){
             
@@ -374,7 +374,7 @@ class SiteSystem{
             //手紙に関するデータを送信
         });
         img.addEventListener("click",()=>{
-            this.check_letter(listsurrent_id);
+            this.check_letter(lists,current_id);
             //手紙に関するデータを送信
         });
         //===============================================================================================
@@ -409,7 +409,7 @@ class SiteSystem{
 
     register(){//【➡constracter】
         alert("in register")
-        var register_passwards = ["にじさんじ234"]
+        var register_passwards = ["test"]
 
            
         var contents = [
