@@ -14,8 +14,29 @@ class SiteSystem{
         }
 
 
+        //==============COMMMON================================================================
+        this.ad_quiz = document.getElementById("quiz");
+        this.ad_uranai = document.getElementById("uranai");
+        this.ad_omikuzi = document.getElementById("omikuzi");
+        this.ad_Library = document.getElementById("library");
 
+        this.ad_quiz.addEventListener("click",()=>{
+            window.location.href = "https://yamatoaita.github.io/quiz.github.io/";
+        })
+        this.ad_uranai.addEventListener("click",()=>{
+            window.location.href = "https://yamatoaita.github.io/fortune-telling.github.io/";
+        })
+        this.ad_omikuzi.addEventListener("click",()=>{
+            window.location.href = "https://yamatoaita.github.io/omikuzi.github.io/";
+        })
+        this.ad_Library.addEventListener("click",()=>{
+            window.location.href = "https://yamatoaita.github.io/library.github.io/";
+        })
+        //=========================================================================================
         {//common
+            
+
+
             this.explain = document.getElementById("explain");
             // Firebase configuration
             const firebaseConfig = {
@@ -409,7 +430,10 @@ class SiteSystem{
 
     register(){//【➡constracter】
         alert("in register")
-        var register_passwards = ["test"]
+        var register_passwards = ["ゆり140",
+            "タンポポ12",
+            "すいせん621",
+            "サッカー129"]
 
            
         var contents = [
