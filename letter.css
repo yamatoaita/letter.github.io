@@ -261,3 +261,96 @@ body{
     }   
 }
 
+
+.ads{
+    background-color: rgba(226, 244, 200, 0.425);
+    
+    height: 200px;
+    width: 900px;
+    border-radius: 50px; /* 角を丸める */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* ぼやけた影 */
+
+    position: relative;
+    top: 70px;
+    left: 240px;
+}
+
+.letter_ads{
+    background-color: rgba(226, 244, 200, 0.425);
+    
+    height: 200px;
+    width: 900px;
+    border-radius: 50px; /* 角を丸める */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* ぼやけた影 */
+
+    position: relative;
+    left: 240px;
+    top: 5px;
+
+}
+
+
+.ad_pics{
+    position: relative;
+    top: 20px;
+    left: 30px;
+    margin: 0px 30px 0px;
+    width: 150px;
+}
+
+#quiz{
+    width: 160px;
+}
+#uranai{
+    top: 13px;
+    left: 15px;
+    width: 145px;
+}
+#omikuzi{
+    top: 30px;
+}
+#library{
+    top: 0px;
+}
+
+
+@media(max-width: 480px){
+    .ads{
+        left: 20px;
+        width: 350px;
+        height: 120px;
+    }
+
+    .letter_ads{
+        top: 50px;
+        left: 20px;
+        width: 350px;
+        height: 120px;
+    }
+
+    .ad_pics{
+        position: relative;
+        margin: -5px 0px 0px;
+        left: 15px;
+    }
+
+    #quiz{
+        
+        top: 25px;
+        width: 90px;
+    }
+    #uranai{
+        top: 15px;
+        left: 12px;
+        width: 74px;
+    }
+    #omikuzi{
+        top: 25px;
+        width: 77px;
+    }
+    #library{
+        top: 12px;
+        width: 80px;
+    }  
+
+}
